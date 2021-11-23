@@ -1,0 +1,22 @@
+{
+  "name": "symolo.zen.writer",
+  "version": "0.0.1",
+  "description": "a simple tool for writing in a zen mode",
+  "main": "./src/index.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/symolo/symolo.zen.writer.git"
+  },
+  "keywords": [
+    "Electron"
+  ],
+  "author": "GitHub",
+  "license": "CC0-1.0",
+  "devDependencies": {
+    "electron": "^16.0.0",
+    "electron-reloader": "^1.2.1"
+  }
+}
