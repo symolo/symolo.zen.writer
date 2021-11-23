@@ -12,26 +12,19 @@ let mainWindow = null;
 function createWindow() {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800,
+    width: 1000,
     height: 600,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: true,
-      contextIsolation: false
     },
     frame: false
-   /* titleBarStyle: 'hidden',
-    titleBarOverlay: {
-      color: '#333',
-      symbolColor: '#d5ebf2e7' //#74b1be'
-    }*/
   })
 
   // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, 'index.html'))
 
   // Open the DevTools.
-  // mainWindow.webContents.openDevTools()
+  mainWindow.webContents.openDevTools()
 }
 
 // This method will be called when Electron has finished
@@ -61,6 +54,19 @@ ipcMain.on('closeApp', (event, path) => {
   app.quit();
 });
 
+ipcMain.on('newfile', (event, path) => {
+  const { dialog } = require('electron')
+  dialog.showSaveDialog().then(result => {
+    process.stdout.write("newfile? " + JSON.stringify(result) );
+    if (!result.filePath) {
+      process.stdout.write("No file selected");
+    } else {
+      event.sender.send('filepath', result.filePath)
+      event.sender.send('fileData', "")
+    }
+  });
+});
+
 ipcMain.on('openFile', (event, path) => {
   const { dialog } = require('electron')
   const fs = require('fs')
@@ -69,30 +75,42 @@ ipcMain.on('openFile', (event, path) => {
     // process.stdout.write("file? " + JSON.stringify(result) );
     if (result.filePaths.length < 1) {
       process.stdout.write("No file selected");
-
     } else {
+      event.sender.send('filepath', result.filePaths[0])
       readFile(result.filePaths[0]);
     }
   });
 
   function readFile(filepath) {
-
     fs.readFile(filepath, 'utf-8', (err, data) => {
-
       if (err) {
         process.stdout.write("An error ocurred reading the file :" + err.message)
         return
       }
-
       // handle the file content 
       event.sender.send('fileData', data)
     })
   }
-})
+});
+
+ipcMain.on('savefile', (event, path) => {
+  const { dialog } = require('electron')
+  const fs = require('fs')
+
+  dialog.showSaveDialog().then(result => {
+    // process.stdout.write("file? " + JSON.stringify(result) );
+    if (!result.filePath) {
+      process.stdout.write("No file selected");
+    } else {
+      event.sender.send('saveto',  result.filePath)
+      // process.stdout.write("saveto", result.filePath);
+      //readFile(result.filePaths[0]);
+    }
+  });
+});
 
 ipcMain.on('savecontent', (event, args) => {
-  // process.stdout.write("save "+args);
-  fs.writeFileSync("../autosave.txt", args, 'utf-8');
+  fs.writeFileSync(args.file, args.content, 'utf-8');
 });
 
 ipcMain.on('toggleMaxWnd', (event, args) => {

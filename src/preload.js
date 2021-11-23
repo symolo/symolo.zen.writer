@@ -1,14 +1,102 @@
-// All of the Node.js APIs are available in the preload process.
-// It has the same sandbox as a Chrome extension.
-window.addEventListener('DOMContentLoaded', () => {
-  const replaceText = (selector, text) => {
-    const element = document.getElementById(selector)
-    if (element) element.innerText = text
-  }
+const { contextBridge, ipcRenderer } = require('electron');
+const fs = require('fs');
+const path = require('path');
 
-  for (const type of ['chrome', 'node', 'electron']) {
-    replaceText(`${type}-version`, process.versions[type])
+let qEditor = null;
+
+let appState = {
+  currentfile: "../autosave.txt",
+  autosavefile: "",
+  content: ""
+};
+
+ipcRenderer.on('filepath', (event, data) => {
+  appState.currentfile = data;
+  appState.autosavefile = path.join(path.dirname(data), ".auto." + path.basename(data));
+  document.body.querySelector('.title').innerHTML = path.basename(data);
+});
+
+ipcRenderer.on('fileData', (event, data) => {
+  qEditor.setText(data);
+  appState.content = qEditor.getContents();
+  localStorage.setItem("state", JSON.stringify(appState));
+});
+
+ipcRenderer.on('saveto', (event, data) => {
+  appState.currentfile = data;
+  appState.autosavefile = path.join(path.dirname(data), ".auto." + path.basename(data));
+  document.body.querySelector('.title').innerHTML = path.basename(data);
+  fs.writeFileSync(appState.currentfile, qEditor.getText(), 'utf-8');
+});
+
+contextBridge.exposeInMainWorld('app', {
+
+  close: () => {
+    ipcRenderer.send('closeApp');
+  },
+
+  'tooglemaxmin': () => {
+    ipcRenderer.send('toggleMaxWnd');
+  },
+
+  'createEditor': (target) => {
+    const Quill = require('quill');
+    qEditor = new Quill(target, {
+      modules: {
+        toolbar: [
+          [{ header: [1, 2, false] }],
+          ['bold', 'italic', 'underline']
+        ]
+      },
+      scrollingContainer: '#scrolling-container',
+      theme: 'bubble'//,
+      //placeholder: 'write here'
+    });
+
+    const lastState = localStorage.getItem("state");
+    if (lastState) {
+      appState = JSON.parse(lastState);
+      qEditor.setContents(appState.content);
+      document.body.querySelector('.title').innerHtml = path.basename(appState.currentfile);
+    }
+
+    qEditor.on('text-change', function (delta, oldDelta, source) {
+      // if (source == 'api') {
+      //   // console.log("An API call triggered this change.");
+      // } else if (source == 'user') {
+      //   // console.log("A user action triggered this change.");
+      // }
+      if (source == 'user') {
+        appState.content = qEditor.getContents();
+        localStorage.setItem("state", JSON.stringify(appState));
+        fs.writeFileSync(appState.autosavefile, JSON.stringify(appState.content), 'utf-8');
+      }
+    });
+  },
+
+  'buildicons': () => {
+    const feather = require('feather-icons');
+    feather.replace();
+  },
+
+  'newfile': () => {
+    ipcRenderer.send('newfile');
+    document.body.querySelector('.submenu').classList.toggle('show');
+  },
+
+  'openfile': () => {
+    ipcRenderer.send('openFile');
+    document.body.querySelector('.submenu').classList.toggle('show');
+  },
+
+  'savefile': () => {
+    ipcRenderer.send('savefile');
+    document.body.querySelector('.submenu').classList.toggle('show');
   }
-})
+});
+
+
+
+
 
 

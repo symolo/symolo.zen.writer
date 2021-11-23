@@ -1,7 +1,89 @@
 /* styles.css */
 
-/* Add styles here to customize the appearance of your app */
-@import url('https://fonts.googleapis.com/css2?family=Raleway:ital,wght@0,200;1,100&family=Roboto:wght@300&display=swap');
+/* https://google-webfonts-helper.herokuapp.com/fonts/raleway?subsets=latin */
+/* raleway-100 - latin */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 100;
+  src: local(''),
+    url('./fonts/raleway-v22-latin-100.woff2') format('woff2'),
+    /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('./fonts/raleway-v22-latin-100.woff') format('woff');
+  /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* raleway-200 - latin */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 200;
+  src: local(''),
+    url('./fonts/raleway-v22-latin-200.woff2') format('woff2'),
+    /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('./fonts/raleway-v22-latin-200.woff') format('woff');
+  /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* raleway-300 - latin */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 300;
+  src: local(''),
+    url('./fonts/raleway-v22-latin-300.woff2') format('woff2'),
+    /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('./fonts/raleway-v22-latin-300.woff') format('woff');
+  /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* raleway-600 - latin */
+@font-face {
+  font-family: 'Raleway';
+  font-style: normal;
+  font-weight: 600;
+  src: local(''),
+    url('./fonts/raleway-v22-latin-600.woff2') format('woff2'),
+    /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('./fonts/raleway-v22-latin-600.woff') format('woff');
+  /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* raleway-100italic - latin */
+@font-face {
+  font-family: 'Raleway';
+  font-style: italic;
+  font-weight: 100;
+  src: local(''),
+    url('./fonts/raleway-v22-latin-100italic.woff2') format('woff2'),
+    /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('./fonts/raleway-v22-latin-100italic.woff') format('woff');
+  /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* raleway-200italic - latin */
+@font-face {
+  font-family: 'Raleway';
+  font-style: italic;
+  font-weight: 200;
+  src: local(''),
+    url('./fonts/raleway-v22-latin-200italic.woff2') format('woff2'),
+    /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('./fonts/raleway-v22-latin-200italic.woff') format('woff');
+  /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
+
+/* raleway-italic - latin */
+@font-face {
+  font-family: 'Raleway';
+  font-style: italic;
+  font-weight: 400;
+  src: local(''),
+    url('./fonts/raleway-v22-latin-italic.woff2') format('woff2'),
+    /* Chrome 26+, Opera 23+, Firefox 39+ */
+    url('./fonts/raleway-v22-latin-italic.woff') format('woff');
+  /* Chrome 6+, Firefox 3.6+, IE 9+, Safari 5.1+ */
+}
 
 html {
   height: 100%;
@@ -12,6 +94,7 @@ body {
   padding: 0px;
   height: 100%;
   font-family: 'Raleway', sans-serif;
+  font-weight: 200;
   -webkit-app-region: drag;
   max-width: 900px;
   margin: 0 auto;
@@ -26,6 +109,11 @@ body {
   text-align: justify;
   hyphens: auto;
 }
+
+.ql-tooltip {
+  -webkit-app-region: no-drag;
+}
+
 
 /* width */
 ::-webkit-scrollbar {
@@ -61,53 +149,96 @@ body {
   }
 }
 
-.close-btn {
+.btn {
+
+  height: 24px;
+  width: 24px;
+  -webkit-app-region: no-drag;
+  cursor: pointer;
+  opacity: 0.3;
+}
+
+.btn:hover {
+  background-color: #555;
+  color: white;
+  border-radius: 4px;
+  opacity: 1;
+}
+
+.btn.close {
   position: absolute;
   right: 10px;
   top: 10px;
-  /* height: 40px; */
-  /* width: 40px; */
-  -webkit-app-region: no-drag;
-  /* font-size: 96px; */
-  text-align: center;
-  vertical-align: middle;
-  font-size: x-large;
-  cursor: pointer;
-  opacity: 0.3;
-  padding: 2px 12px 4px 12px;
-
-
-
 }
 
-.close-btn:hover {
-  background-color: #555;
-  color: white;
-  border-radius: 4px;
-  opacity: 1;
-  /* padding: 4px; */
-}
-
-.maxmin-btn {
+.btn.maxmin {
   position: absolute;
-  right: 60px;
+  right: 39px;
   top: 10px;
-  /* height: 40px; */
-  /* width: 40px; */
-  -webkit-app-region: no-drag;
-  /* font-size: 96px; */
-  text-align: center;
-  vertical-align: middle;
-  font-size: x-large;
-  cursor: pointer;
-  opacity: 0.3;
-  padding: 2px 12px 4px 12px;
+  height: 20px;
+  width: 20px;
+  padding: 4px 0 0 4px;
 }
 
-.maxmin-btn:hover {
-  background-color: #555;
-  color: white;
-  border-radius: 4px;
+.btn.menu {
+  position: absolute;
+  left: 10px;
+  bottom: 10px;
+  height: 28px;
+  width: 28px;
+  padding: 4px 0 0 4px;
+}
+
+/* Tell Quill not to scroll */
+#quill-container {
+  height: auto;
+  min-height: 100%;
+  padding: 50px;
+  margin: 40px;
+}
+
+#quill-container .ql-editor {
+  font-size: 21px;
+  overflow-y: visible;
+}
+
+/* Specify our own scrolling container */
+#scrolling-container {
+  height: 100%;
+  min-height: 100%;
+  overflow-y: auto;
+}
+
+#main-container {
+  padding: 0px 0px;
+  overflow: auto;
+  height: 100%;
+}
+
+.title {
+  position: absolute;
+  top: -25px;
+  left: -5px;
+  font-size: 84px;
+  opacity: 0.3;
+}
+
+.submenu {
+  position: absolute;
+  left: 6px;
+  bottom: 40px;
+  /* border: 1px solid #555; */
+  padding: 4px;
+  opacity: 0;
+}
+
+.submenu .btn {
+  margin-bottom: 8px;
+  padding:4px;
+}
+
+.submenu.show {
+  transition: visibility 0.8s, opacity 0.8s;
+  visibility:visible;
   opacity: 1;
-  /* padding: 4px; */
 }
