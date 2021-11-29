@@ -12,7 +12,7 @@ let appState = {
 
 ipcRenderer.on('filepath', (event, data) => {
   appState.currentfile = data;
-  appState.autosavefile = path.join(path.dirname(data), ".auto." + path.basename(data));
+  appState.autosavefile = path.join(path.dirname(data), ".auto." + path.basename(data, '.txt'));
   document.body.querySelector('.title').innerHTML = path.basename(data);
 });
 
@@ -24,7 +24,7 @@ ipcRenderer.on('fileData', (event, data) => {
 
 ipcRenderer.on('saveto', (event, data) => {
   appState.currentfile = data;
-  appState.autosavefile = path.join(path.dirname(data), ".auto." + path.basename(data));
+  appState.autosavefile = path.join(path.dirname(data), ".auto." + path.basename(data, '.txt'));
   document.body.querySelector('.title').innerHTML = path.basename(data);
   fs.writeFileSync(appState.currentfile, qEditor.getText(), 'utf-8');
 });
@@ -39,9 +39,13 @@ contextBridge.exposeInMainWorld('app', {
     ipcRenderer.send('toggleMaxWnd');
   },
 
-  'createEditor': (target) => {
+  'start': () => {
+
+    const feather = require('feather-icons');
+    feather.replace();
+
     const Quill = require('quill');
-    qEditor = new Quill(target, {
+    qEditor = new Quill('#quill-container', {
       modules: {
         toolbar: [
           [{ header: [1, 2, false] }],
@@ -56,8 +60,9 @@ contextBridge.exposeInMainWorld('app', {
     const lastState = localStorage.getItem("state");
     if (lastState) {
       appState = JSON.parse(lastState);
+      console.log("state",appState);
       qEditor.setContents(appState.content);
-      document.body.querySelector('.title').innerHtml = path.basename(appState.currentfile);
+      document.body.querySelector('.title').innerHTML = path.basename(appState.currentfile, '.txt');
     }
 
     qEditor.on('text-change', function (delta, oldDelta, source) {
@@ -72,11 +77,6 @@ contextBridge.exposeInMainWorld('app', {
         fs.writeFileSync(appState.autosavefile, JSON.stringify(appState.content), 'utf-8');
       }
     });
-  },
-
-  'buildicons': () => {
-    const feather = require('feather-icons');
-    feather.replace();
   },
 
   'newfile': () => {
